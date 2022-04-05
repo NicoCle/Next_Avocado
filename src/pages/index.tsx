@@ -1,19 +1,19 @@
-import { NextPage } from "next";
-import { useEffect, useState } from "react";
+import fetch from "isomorphic-unfetch";
 import AvoCards from "@components/Card";
 import Layout from "src/Layout";
 
-const HomePage: NextPage = () => {
-  const [productList, setProdutList] = useState([]);
+export const getStaticProps = async () => {
+  const response = await fetch("https://next-avocado-two.vercel.app/api/avo");
+  const { data: productList } = await response.json();
 
-  useEffect(() => {
-    window
-      .fetch("api/avo")
-      .then((res) => res.json())
-      .then(({ data }) => {
-        setProdutList(data);
-      });
-  }, []);
+  return {
+    props: {
+      productList,
+    },
+  };
+};
+
+const HomePage = ({ productList }: { productList: TProduct[] }) => {
   return (
     <Layout>
       <AvoCards products={productList} />

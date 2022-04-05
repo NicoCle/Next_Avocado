@@ -1,20 +1,17 @@
 import Link from "next/link";
 import { Box, Image, Badge } from "@chakra-ui/react";
 
-type IAvoCardsProps = {
+type TAvoCardsProps = {
   products: TProduct[];
 };
 
-const AvoCards = ({ products }: IAvoCardsProps) => {
-  console.log(products);
+const AvoCards = ({ products }: TAvoCardsProps) => {
   return (
     <>
-      {console.log(products)}
       {products.map(({ name, price, id, image }, key) => {
         return (
-          <Link href={`./product/${id}`}>
+          <Link href={`./product/${id}`} key={key}>
             <Box
-              key={key}
               maxW="sm"
               borderWidth="1px"
               borderRadius="lg"

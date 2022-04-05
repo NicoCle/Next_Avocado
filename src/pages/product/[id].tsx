@@ -1,22 +1,36 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { GetStaticProps } from "next";
 import Layout from "src/Layout";
 import ProductSummary from "@components/ProductSummary";
 
-const ProductPage = () => {
-  const { query } = useRouter();
-  const [product, setProduct] = useState<TProduct | null>(null);
+export const getStaticPaths = async () => {
+  const response = await fetch("https://next-avocado-two.vercel.app/api/avo");
+  const { data: productList } = await response.json();
+  const paths = productList.map(({ id }) => ({
+    params: {
+      id,
+    },
+  }));
 
-  useEffect(() => {
-    if (query.id) {
-      window
-        .fetch(`/api/avo/${query.id}`)
-        .then((response) => response.json())
-        .then((data: TProduct) => {
-          setProduct(data);
-        });
-    }
-  }, [query.id]);
+  return {
+    paths,
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const response = await fetch(
+    `https://next-avocado-two.vercel.app/api/avo/${params.id}`
+  );
+  const product: TProduct = await response.json();
+
+  return {
+    props: {
+      product,
+    },
+  };
+};
+
+const ProductPage = ({ product }: { product: TProduct }) => {
   return (
     <Layout>
       {product === null ? null : <ProductSummary product={product} />}
